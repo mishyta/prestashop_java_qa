@@ -6,17 +6,13 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
-import java.util.List;
-
 public class MainPage extends BasePage {
 
     public final String URL = "http://prestashop-automation.qatestlab.com.ua/ru/";
+    public final GoodsCard goodsCard = new GoodsCard(driver);
 
     @FindBy(css = ".currency-selector span.expand-more")
     private WebElement currencyDD;
-
-    @FindBy(xpath = "")
-    private WebElement currencyDDValue;
 
     @FindBy(xpath = "//*[@class='thumbnail-container']//*[@class='price']")
     private WebElement productCardCurrency;
@@ -24,15 +20,15 @@ public class MainPage extends BasePage {
     @FindBy(css = "[name=\"s\"]")
     private WebElement searchInput;
 
-    @FindBy(css = ".thumbnail-container")
-    public List<WebElement> goods;
 
     @FindBy(css = ".total-products")
     private WebElement totalSearchProducts;
 
 
+
     public MainPage(WebDriver driver) {
         super(driver);
+
     }
 
     public void changeCurrency(String value){
@@ -56,8 +52,13 @@ public class MainPage extends BasePage {
     private int getValueTotalSearchProducts(){
         return Character.getNumericValue(totalSearchProducts.getText().charAt(totalSearchProducts.getText().length()-2));
     }
-    public void aseertTotalResultSearch(){
-        assert countElements(goods) == getValueTotalSearchProducts();
+
+    public void assertTotalResultSearch(){
+        assert goodsCard.getTotalNumberOfGoodsAtPage() == getValueTotalSearchProducts();
     }
+
+
+
+
 
 }
