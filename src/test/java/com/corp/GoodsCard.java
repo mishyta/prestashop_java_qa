@@ -22,10 +22,10 @@ public class GoodsCard extends BasePage{
     }
 
 
-    public  ArrayList<String> getPrices(){
+    public  List<String> getPrices(){
 
         final By price = By.cssSelector("span.price");
-        ArrayList<String> result = new ArrayList<String>();
+        List<String> result = new ArrayList<>();
 
         for(WebElement good:goods){
             result.add(good.findElement(price).getText());
@@ -40,7 +40,7 @@ public class GoodsCard extends BasePage{
 
 
     public void assertGoodsCardsPriceMatchPageCurrency(){
-        ArrayList<String> goodsPricesCurrency = getPrices();
+        List<String> goodsPricesCurrency = getPrices();
         for (String price:goodsPricesCurrency){
             assert price.charAt(price.length()-1) == '$';
         }

@@ -7,9 +7,13 @@ import org.junit.Test;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-
+import static com.corp.MainPage.PageCurrency.UAH;
+import static com.corp.MainPage.PageCurrency.USD;
+import static com.corp.MainPage.PageSortBy.PriceHtoL;
 
 
 public class ShopTest {
@@ -43,7 +47,7 @@ public class ShopTest {
     @Test
     public void currencyComparison() {
 
-        page.changeCurrency(MainPage.PageCurrency.UAH);
+        page.changeCurrency(UAH);
         page.assertPageCurrency();
 
 
@@ -58,7 +62,7 @@ public class ShopTest {
     public void totalSearchProducts(){
 
         page.search("dress");
-        page.countElements(page.goodsCard.goods);
+        page.countElements(GoodsCard.goods);
         page.assertTotalResultSearch();
 
     }
@@ -69,17 +73,25 @@ public class ShopTest {
     @Test
     public void checkProductCardsCurrency(){
 
-        page.changeCurrency(MainPage.PageCurrency.USD);
+        page.changeCurrency(USD);
         page.search("dress");
         page.goodsCard.assertGoodsCardsPriceMatchPageCurrency();
 
     }
 
     @Test
-    public void checkSortPriceHtoL(){
+    public void checkSortPriceHtoL()  {
+
+        List<String> listOfPricesBeforeSort;
+        List<String> listOfPricesAfterSort;
 
         page.search("dress");
-        page.sortBy(MainPage.PageSortBy.PriceHtoL);
+        listOfPricesBeforeSort = page.goodsCard.getPrices();
+        page.sortBy(PriceHtoL);
+        listOfPricesAfterSort = page.goodsCard.getPrices();
+
+        System.out.println(listOfPricesBeforeSort);
+        System.out.println(listOfPricesAfterSort);
 
     }
 
