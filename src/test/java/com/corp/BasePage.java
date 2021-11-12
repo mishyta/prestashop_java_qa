@@ -1,4 +1,5 @@
 package com.corp;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -22,6 +23,10 @@ public class BasePage {
         return elements.size();
     }
 
+    public void changeDDValue(WebElement dd,WebElement ddvalues, String value){
+        dd.click();
+        ddvalues.findElement(By.xpath("//a[contains(text(),'" + value + "')]")).click();
+    }
 
 
 

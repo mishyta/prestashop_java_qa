@@ -1,10 +1,15 @@
 package com.corp;
 
-import org.junit.*;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 
 import java.util.concurrent.TimeUnit;
+
+
 
 
 public class ShopTest {
@@ -18,11 +23,14 @@ public class ShopTest {
     }
 
     @Before
-    public  void setup() {
+    public  void setup()  {
+
         driver = new ChromeDriver();
         driver.manage().window().maximize();
         driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
         page = new MainPage(driver);
+        page.openPage(page.URL);
+
     }
 
 
@@ -33,10 +41,9 @@ public class ShopTest {
      */
 
     @Test
-    public void testCurrencyComparison() {
+    public void currencyComparison() {
 
-        page.openPage(page.URL);
-        page.changeCurrency("UAH");
+        page.changeCurrency(MainPage.PageCurrency.UAH);
         page.assertPageCurrency();
 
 
@@ -48,9 +55,8 @@ public class ShopTest {
      */
 
     @Test
-    public void testTotalSearchProducts(){
+    public void totalSearchProducts(){
 
-        page.openPage(page.URL);
         page.search("dress");
         page.countElements(page.goodsCard.goods);
         page.assertTotalResultSearch();
@@ -61,18 +67,24 @@ public class ShopTest {
      * Check that the price of all the results shown is displayed in dollars.
      */
     @Test
-    public void test_check_product_cards_currency(){
+    public void checkProductCardsCurrency(){
 
-        page.openPage(page.URL);
-        page.changeCurrency("USD");
+        page.changeCurrency(MainPage.PageCurrency.USD);
         page.search("dress");
         page.goodsCard.assertGoodsCardsPriceMatchPageCurrency();
 
     }
 
+    @Test
+    public void checkSortPriceHtoL(){
+
+        page.search("dress");
+        page.sortBy(MainPage.PageSortBy.PriceHtoL);
+
+    }
+
     @After
     public void tearDown() {
-        System.out.println(driver);
         driver.quit();
     }
 
