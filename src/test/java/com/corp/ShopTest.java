@@ -5,15 +5,15 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import static com.corp.MainPage.PageCurrency.UAH;
-import static com.corp.MainPage.PageCurrency.USD;
-import static com.corp.MainPage.PageSortBy.PriceHtoL;
+import static com.corp.MainPage.PageCurrency.₴;
+import static com.corp.MainPage.PageCurrency.$;
+//import static com.corp.MainPage.PageSortBy.PriceHtoL;
+import static com.corp.MainPage.PageSortBy.*;
 
 
 public class ShopTest {
@@ -47,7 +47,7 @@ public class ShopTest {
     @Test
     public void currencyComparison() {
 
-        page.changeCurrency(UAH);
+        page.changeCurrency(₴);
         page.assertPageCurrency();
 
 
@@ -62,7 +62,7 @@ public class ShopTest {
     public void totalSearchProducts(){
 
         page.search("dress");
-        page.countElements(GoodsCard.goods);
+        page.countElements(GoodsCard.goodsCards);
         page.assertTotalResultSearch();
 
     }
@@ -73,26 +73,33 @@ public class ShopTest {
     @Test
     public void checkProductCardsCurrency(){
 
-        page.changeCurrency(USD);
+        page.changeCurrency($);
         page.search("dress");
-        page.goodsCard.assertGoodsCardsPriceMatchPageCurrency();
+        page.assertGoodsCardsPriceMatchPageCurrency();
 
     }
 
     @Test
     public void checkSortPriceHtoL()  {
 
-        List<String> listOfPricesBeforeSort;
-        List<String> listOfPricesAfterSort;
+        page.search("dress");
+        page.sortBy(PriceHtoL);
+        page.assertSort();
+
+
+    }
+
+    @Test
+    public void test_check_products_with_discount_contains_values(){
+        page.search("dress");
+        // todo test # 6
+
+    }
+
+    @Test
+    public void forTests(){
 
         page.search("dress");
-        listOfPricesBeforeSort = page.goodsCard.getPrices();
-        page.sortBy(PriceHtoL);
-        listOfPricesAfterSort = page.goodsCard.getPrices();
-
-        System.out.println(listOfPricesBeforeSort);
-        System.out.println(listOfPricesAfterSort);
-
     }
 
     @After

@@ -18,7 +18,6 @@ public class BasePage {
     public void openPage(String url){
         driver.get(url);
     }
-
     public int countElements(List<WebElement> elements){
         return elements.size();
     }

@@ -1,5 +1,6 @@
 package com.corp;
 
+import com.google.common.collect.Ordering;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -7,12 +8,15 @@ import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.util.concurrent.TimeUnit;
+
+import static com.corp.GoodsCard.goodsCards;
 
 
 public class MainPage extends BasePage {
 
     public final String URL = "http://prestashop-automation.qatestlab.com.ua/ru/";
-    public final GoodsCard goodsCard = new GoodsCard(driver);
+    public final GoodsCard GC = new GoodsCard(driver);
 
     @FindBy(css = ".currency-selector span.expand-more")
     private WebElement currencyDD;
@@ -36,9 +40,9 @@ public class MainPage extends BasePage {
     private WebElement sortDDValues;
 
     public enum PageCurrency{
-        USD,
-        EUR,
-        UAH
+        $,
+        €,
+        ₴
     }
 
     public enum PageSortBy{
@@ -92,20 +96,51 @@ public class MainPage extends BasePage {
     }
 
     public void assertTotalResultSearch(){
-        assert goodsCard.getTotalNumberOfGoodsAtPage() == getValueTotalSearchProducts();
+        assert getTotalNumberOfGoodsAtPage() == getValueTotalSearchProducts();
     }
 
-    public void sortBy(PageSortBy by){
+    public int getTotalNumberOfGoodsAtPage(){
+        return countElements(goodsCards);
+    }
 
-        changeDDValue(sortDD, sortDDValues, by.getValue());
+    public void assertGoodsCardsPriceMatchPageCurrency(){
+        for (WebElement goods: goodsCards){
+            assert GC.getCurrency(goods) == '$';
+        }
+    }
+
+    public void sortBy(final PageSortBy sortByValue){
+
+        changeDDValue(sortDD, sortDDValues, sortByValue.getValue());
 
         (new WebDriverWait(driver, 10)).until(new ExpectedCondition<Boolean>() {
             public Boolean apply(WebDriver d) {
-                return sortDD.getText().startsWith(by.getValue());
+                return sortDD.getText().startsWith(sortByValue.getValue());
             }
         });
 
     }
 
+    public void assertSort(){
+        if (sortDD.getText().startsWith(PageSortBy.PriceHtoL.getValue())){
+            assert Ordering.natural().reverse().isOrdered(GC.getRegPrices());
+        }
+        else if (sortDD.getText().startsWith(PageSortBy.PriceLtoH.getValue())){
+            assert Ordering.natural().isOrdered(GC.getRegPrices());
+        }
+        else if (sortDD.getText().startsWith(PageSortBy.NameAtoZ.getValue())){
+            assert Ordering.natural().isOrdered(GC.getTitles());
+        }
+        else if (sortDD.getText().startsWith(PageSortBy.NameZtoA.getValue())){
+            assert Ordering.natural().reverse().isOrdered(GC.getTitles());
+        }
+        else {
+            System.out.println("Selected sorting are not checked");
+        }
+    }
+
+    public void assertGoodsDiscountMatches(){
+
+    }
 
 }
