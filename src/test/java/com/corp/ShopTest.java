@@ -18,7 +18,7 @@ public class ShopTest {
     public  MainPage page;
 
     @BeforeTest
-    public static void setProp(){
+    public  void setProp(){
         System.setProperty("webdriver.chrome.driver", "/home/mknysh/drivers/chromedriver");
     }
 
@@ -85,17 +85,29 @@ public class ShopTest {
 
     }
 
+    /**
+     *  For discount products, a percentage discount is indicated along with the price before and '
+     *  after the discount.
+     */
+
     @Test
-    public void test_check_products_with_discount_contains_values(){
+    public void CheckGoodsWithDiscountContainsValues(){
         page.search("dress");
-        // todo test # 6
+        page.assertDiscountedGoodsForContainsValues();
 
     }
 
+    /**
+     * Check that the price before and after the discount coincides with the specified discount size.
+     */
+
     @Test
-    public void forTests(){
+    public void checkGoodsDiscountMatching(){
 
         page.search("dress");
+        page.assertGoodsDiscountMatches();
+
+
     }
 
     @AfterMethod
