@@ -7,7 +7,10 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.testng.Assert;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.concurrent.TimeUnit;
 
 import static com.corp.GoodsCard.goodsCards;
@@ -39,6 +42,7 @@ public class MainPage extends BasePage {
     @FindBy (css = "div.products-sort-order div.dropdown-menu")
     private WebElement sortDDValues;
 
+    @SuppressWarnings("NonAsciiCharacters")
     public enum PageCurrency{
         $,
         €,
@@ -65,9 +69,6 @@ public class MainPage extends BasePage {
         }
     }
 
-//    public enum PageSortByPrices extends PageSortBy{
-//
-//    }
 
 
     public MainPage(WebDriver driver) {
@@ -113,11 +114,7 @@ public class MainPage extends BasePage {
 
         changeDDValue(sortDD, sortDDValues, sortByValue.getValue());
 
-        (new WebDriverWait(driver, 10)).until(new ExpectedCondition<Boolean>() {
-            public Boolean apply(WebDriver d) {
-                return sortDD.getText().startsWith(sortByValue.getValue());
-            }
-        });
+        (new WebDriverWait(driver, 10)).until((ExpectedCondition<Boolean>) d -> sortDD.getText().startsWith(sortByValue.getValue()));
 
     }
 
@@ -139,7 +136,29 @@ public class MainPage extends BasePage {
         }
     }
 
+    public void assertDiscountedGoodsForContainsValues(){
+        driver.manage().timeouts().implicitlyWait(0,TimeUnit.SECONDS);
+        for(WebElement goods:goodsCards){
+            if(GC.checkDiscountExists(goods)){
+                Assert.assertTrue(GC.checkPercentsAtDiscountExists(goods),
+                        GC.getTitle(goods) + " don't have \"%\" at discount");
+                Assert.assertTrue(GC.checkRegPriceExists(goods),
+                        GC.getTitle(goods) + " don't have regular price");
+                Assert.assertTrue(GC.checkPriceExists(goods),
+                        GC.getTitle(goods) + "don't have price");
+            }
+        }
+    }
+
     public void assertGoodsDiscountMatches(){
+//        driver.manage().timeouts().implicitlyWait(0,TimeUnit.SECONDS);
+        for (WebElement goods:goodsCards){
+            if(GC.checkDiscountExists(goods)){
+                BigDecimal discount = BigDecimal.valueOf(GC.getDiscount(goods))
+                        .setScale(2, RoundingMode.HALF_UP);
+                Assert.assertEquals(discount,GC.calculateDiscount(goods));
+            }
+        }
 
     }
 
