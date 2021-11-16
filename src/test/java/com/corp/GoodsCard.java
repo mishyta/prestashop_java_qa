@@ -55,7 +55,7 @@ public class GoodsCard extends BasePage{
 
     private float getAttribute(WebElement element, PriceAttributes attribute ){
         String atr = element.findElement(attribute.getValue()).getText();
-        StringBuffer stringBuffer = new StringBuffer(atr);
+        StringBuilder stringBuffer = new StringBuilder(atr);
         stringBuffer.deleteCharAt(stringBuffer.length()-1);
         return Float.parseFloat(stringBuffer.toString().replace(',','.'));
 
