@@ -5,7 +5,12 @@ import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import org.testng.Assert;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -22,13 +27,11 @@ public class GoodsCard extends BasePage{
         Price(By.cssSelector("span.price")),
         RegPrice(By.cssSelector("span.regular-price")),
         Discount(By.cssSelector("span.discount-percentage"));
-
         private final By value;
 
         PriceAttributes(By value){
             this.value = value;
         }
-
         public By getValue(){
             return value;
         }
@@ -37,14 +40,13 @@ public class GoodsCard extends BasePage{
     private enum StrAttributes{
 
         Price(By.cssSelector("span.price")),
-        Title(By.cssSelector("h1.product-title"));
-
+        Title(By.cssSelector("h1.product-title")),
+        Discount(By.cssSelector("span.discount-percentage"));
         private final By value;
 
         StrAttributes(By value){
             this.value = value;
         }
-
         public By getValue(){
             return value;
         }
@@ -59,6 +61,7 @@ public class GoodsCard extends BasePage{
         StringBuffer stringBuffer = new StringBuffer(atr);
         stringBuffer.deleteCharAt(stringBuffer.length()-1);
         return Float.parseFloat(stringBuffer.toString().replace(',','.'));
+
     }
 
     private String getAttribute(WebElement element, StrAttributes attributes){
@@ -134,16 +137,37 @@ public class GoodsCard extends BasePage{
 
         return result;
     }
+    @ImplicitlyWait(0)
+    public Boolean checkPriceExists(WebElement goods){
+        driver.manage().timeouts().implicitlyWait(0,TimeUnit.SECONDS);
 
+        return !goods.findElements(PriceAttributes.Price.value).isEmpty();
+
+    }
     public Boolean checkDiscountExists(WebElement goods){
-        return goods.findElements(PriceAttributes.Discount.value).isEmpty();
+        driver.manage().timeouts().implicitlyWait(0,TimeUnit.SECONDS);
+
+        return !goods.findElements(PriceAttributes.Discount.value).isEmpty();
     }
 
-    public void assertDiscount(WebElement goods){
-        //todo for test #7
-        if(!checkDiscountExists(goods)){
-            System.out.println(getDiscount(goods) + " " + getRegPrice(goods) + " " + getPrice(goods) );
-        }
+    public Boolean checkRegPriceExists(WebElement goods){
+        driver.manage().timeouts().implicitlyWait(0,TimeUnit.SECONDS);
+
+        return !goods.findElements(PriceAttributes.RegPrice.value).isEmpty();
+    }
+
+    public Boolean checkPercentsAtDiscountExists(WebElement goods){
+        String discStr = getAttribute(goods,StrAttributes.Discount);
+        return discStr.endsWith("%");
+    }
+
+    public BigDecimal calculateDiscount(WebElement goods){
+
+        BigDecimal d = new BigDecimal(getDiscount(goods))
+                .setScale(2, RoundingMode.HALF_UP);
+        System.out.println(d);
+        return new BigDecimal((getRegPrice(goods)-getPrice(goods))/getRegPrice(goods))
+                .setScale(2, RoundingMode.HALF_UP);
     }
 
 
