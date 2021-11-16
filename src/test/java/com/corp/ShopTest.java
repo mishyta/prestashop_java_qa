@@ -1,32 +1,28 @@
 package com.corp;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.testng.annotations.*;
 
 import java.util.concurrent.TimeUnit;
 
 import static com.corp.MainPage.PageCurrency.₴;
 import static com.corp.MainPage.PageCurrency.$;
-//import static com.corp.MainPage.PageSortBy.PriceHtoL;
 import static com.corp.MainPage.PageSortBy.*;
 
 
 public class ShopTest {
 
-    public static WebDriver driver;
-    public static MainPage page;
+    public  WebDriver driver;
+    public  MainPage page;
 
-    @BeforeClass
+    @BeforeTest
     public static void setProp(){
         System.setProperty("webdriver.chrome.driver", "/home/mknysh/drivers/chromedriver");
     }
 
-    @Before
+    @BeforeMethod
     public  void setup()  {
 
         driver = new ChromeDriver();
@@ -102,7 +98,7 @@ public class ShopTest {
         page.search("dress");
     }
 
-    @After
+    @AfterMethod
     public void tearDown() {
         driver.quit();
     }
