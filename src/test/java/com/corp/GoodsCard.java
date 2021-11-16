@@ -5,12 +5,9 @@ import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
-import org.testng.Assert;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.math.RoundingMode;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -163,10 +160,8 @@ public class GoodsCard extends BasePage{
 
     public BigDecimal calculateDiscount(WebElement goods){
 
-        BigDecimal d = new BigDecimal(getDiscount(goods))
-                .setScale(2, RoundingMode.HALF_UP);
-        System.out.println(d);
-        return new BigDecimal((getRegPrice(goods)-getPrice(goods))/getRegPrice(goods))
+
+        return BigDecimal.valueOf((getRegPrice(goods) - getPrice(goods)) / getRegPrice(goods))
                 .setScale(2, RoundingMode.HALF_UP);
     }
 
