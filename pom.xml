@@ -48,6 +48,7 @@
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-java</artifactId>
+            <!--suppress MavenPackageUpdate -->
             <version>3.141.59</version>
         </dependency>
 
@@ -69,12 +70,12 @@
 <!--        </dependency>-->
 
 
-        <dependency>
-            <groupId>org.jetbrains</groupId>
-            <artifactId>annotations</artifactId>
-            <version>RELEASE</version>
-            <scope>compile</scope>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.jetbrains</groupId>-->
+<!--            <artifactId>annotations</artifactId>-->
+<!--            <version>RELEASE</version>-->
+<!--            <scope>compile</scope>-->
+<!--        </dependency>-->
 
         <!-- https://mvnrepository.com/artifact/org.testng/testng -->
         <dependency>
