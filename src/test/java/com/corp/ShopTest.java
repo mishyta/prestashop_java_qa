@@ -1,21 +1,26 @@
 package com.corp;
 
-
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.remote.RemoteWebDriver;
+import org.openqa.selenium.support.events.EventFiringWebDriver;
 import org.testng.annotations.*;
 
-import java.util.concurrent.TimeUnit;
+import java.net.MalformedURLException;
+import java.net.URI;
 
-import static com.corp.MainPage.PageCurrency.₴;
-import static com.corp.MainPage.PageCurrency.$;
+import static com.corp.MainPage.PageCurrency;
+import static com.corp.MainPage.PageCurrency.*;
+import static com.corp.MainPage.PageSortBy;
 import static com.corp.MainPage.PageSortBy.*;
-
 
 public class ShopTest {
 
-    public  WebDriver driver;
+    public  EventFiringWebDriver driver;
     public  MainPage page;
+
+
 
     @BeforeTest
     public  void setProp(){
@@ -23,16 +28,44 @@ public class ShopTest {
     }
 
     @BeforeMethod
-    public  void setup()  {
+    public  void setup() throws MalformedURLException {
 
-        driver = new ChromeDriver();
+
+
+        DesiredCapabilities capabilities = new DesiredCapabilities();
+        capabilities.setCapability("browserName", "chrome");
+        capabilities.setCapability("browserVersion", "95.0");
+
+
+        driver = new EventFiringWebDriver(
+                new RemoteWebDriver(URI.create("http://0.0.0.0:4444/wd/hub")
+                .toURL(), capabilities))
+                .register(new Listener());
+
         driver.manage().window().maximize();
-        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
         page = new MainPage(driver);
         page.openPage(page.URL);
 
     }
 
+    @DataProvider
+    public Object[][] sortByValues() {
+        return new Object[][] {
+                {NameAtoZ},
+                {NameZtoA},
+                {PriceLtoH},
+                {PriceHtoL}
+        };
+    }
+
+    @DataProvider
+    public Object[][] currencies() {
+        return new Object[][] {
+                {$},
+                {€},
+                {₴},
+        };
+    }
 
     /**
      *  Perform verification that the price of products in the
@@ -40,12 +73,11 @@ public class ShopTest {
      *  with the installed currency in the header of the site (USD, EUR, UAH).
      */
 
-    @Test
-    public void currencyComparison() {
+    @Test(dataProvider = "currencies")
+    public void currencyComparison(PageCurrency currency) {
 
-        page.changeCurrency(₴);
+        page.changeCurrency(currency);
         page.assertPageCurrency();
-
 
     }
 
@@ -66,22 +98,21 @@ public class ShopTest {
     /**
      * Check that the price of all the results shown is displayed in dollars.
      */
-    @Test
-    public void checkProductCardsCurrency(){
+    @Test(dataProvider = "currencies")
+    public void checkProductCardsCurrency(PageCurrency currency){
 
-        page.changeCurrency($);
+        page.changeCurrency(currency);
         page.search("dress");
         page.assertGoodsCardsPriceMatchPageCurrency();
 
     }
 
-    @Test
-    public void checkSortPriceHtoL()  {
+    @Test(dataProvider = "sortByValues")
+    public void checkSortBy(PageSortBy sortByValue)  {
 
         page.search("dress");
-        page.sortBy(PriceHtoL);
+        page.sortBy(sortByValue);
         page.assertSort();
-
 
     }
 
@@ -106,7 +137,6 @@ public class ShopTest {
 
         page.search("dress");
         page.assertGoodsDiscountMatches();
-
 
     }
 
