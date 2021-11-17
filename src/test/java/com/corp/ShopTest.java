@@ -38,7 +38,7 @@ public class ShopTest {
 
 
         driver = new EventFiringWebDriver(
-                new RemoteWebDriver(URI.create("http://0.0.0.0:4444/wd/hub")
+                new RemoteWebDriver(URI.create("http://10.8.0.46:4444/wd/hub")
                 .toURL(), capabilities))
                 .register(new Listener());
 
