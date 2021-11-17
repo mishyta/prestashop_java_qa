@@ -134,23 +134,26 @@ public class GoodsCard extends BasePage{
 
         return result;
     }
-    @ImplicitlyWait(0)
-    public Boolean checkPriceExists(WebElement goods){
-        driver.manage().timeouts().implicitlyWait(0,TimeUnit.SECONDS);
 
-        return !goods.findElements(PriceAttributes.Price.value).isEmpty();
+
+    public Boolean checkAttributeExists(WebElement goods, PriceAttributes attribute){
+        driver.manage().timeouts().implicitlyWait(0,TimeUnit.SECONDS);
+        boolean res = !goods.findElements(attribute.value).isEmpty();
+        driver.manage().timeouts().implicitlyWait(10,TimeUnit.SECONDS);
+        return res;
+    }
+
+    public Boolean checkPriceExists(WebElement goods){
+        return checkAttributeExists(goods,PriceAttributes.Price);
 
     }
-    public Boolean checkDiscountExists(WebElement goods){
-        driver.manage().timeouts().implicitlyWait(0,TimeUnit.SECONDS);
 
-        return !goods.findElements(PriceAttributes.Discount.value).isEmpty();
+    public Boolean checkDiscountExists(WebElement goods){
+        return checkAttributeExists(goods,PriceAttributes.Discount);
     }
 
     public Boolean checkRegPriceExists(WebElement goods){
-        driver.manage().timeouts().implicitlyWait(0,TimeUnit.SECONDS);
-
-        return !goods.findElements(PriceAttributes.RegPrice.value).isEmpty();
+        return checkAttributeExists(goods,PriceAttributes.RegPrice);
     }
 
     public Boolean checkPercentsAtDiscountExists(WebElement goods){
