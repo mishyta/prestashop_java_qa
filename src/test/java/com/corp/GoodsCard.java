@@ -1,5 +1,6 @@
 package com.corp;
 
+import io.qameta.allure.Step;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
@@ -53,7 +54,7 @@ public class GoodsCard extends BasePage{
         super(driver);
     }
 
-    private float getAttribute(WebElement element, PriceAttributes attribute ){
+    private double getAttribute(WebElement element, PriceAttributes attribute ){
         String atr = element.findElement(attribute.getValue()).getText();
         StringBuilder stringBuffer = new StringBuilder(atr);
         stringBuffer.deleteCharAt(stringBuffer.length()-1);
@@ -61,39 +62,41 @@ public class GoodsCard extends BasePage{
 
     }
 
+    @Step("{attributes.value}")
     private String getAttribute(WebElement element, StrAttributes attributes){
         return element.findElement(attributes.getValue()).getText();
     }
 
-    public float getPrice(WebElement goodsCard) {
+    @Step("Get price of goods card")
+    public double getPrice(WebElement goodsCard) {
         return getAttribute(goodsCard,PriceAttributes.Price);
     }
 
-    public float getRegPrice(WebElement goodsCard) {
+    @Step("Get regular price of goods card")
+    public double getRegPrice(WebElement goodsCard) {
         return getAttribute(goodsCard,PriceAttributes.RegPrice);
     }
 
-    public float getDiscount(WebElement goodsCard) {
-        return (float) (getAttribute(goodsCard,PriceAttributes.Discount) * -0.01);
+    @Step("Get discount of goods card")
+    public double getDiscount(WebElement goodsCard) {
+        return (getAttribute(goodsCard,PriceAttributes.Discount) * -0.01);
     }
 
+    @Step("Get tittle of goods card")
     public String getTitle(WebElement goodsCard){
         return getAttribute(goodsCard, StrAttributes.Title);
     }
 
-    public char getCurrency(WebElement goodsCard){
-        String prc = getAttribute(goodsCard, StrAttributes.Price);
-        return prc.charAt(prc.length()-1);
-    }
-
-    public char getPriceCurrency(WebElement goodsCard) {
+    @Step("Get price currency of goods card")
+    public String getPriceCurrency(WebElement goodsCard) {
         String str = getAttribute(goodsCard,StrAttributes.Price);
-        return str.charAt(str.length()-1);
+        return String.valueOf(str.charAt(str.length()-1));
     }
 
-    public  List<Float> getPrices(){
+    @Step("Get list of prices the goods shown")
+    public  List<Double> getPrices(){
 
-        List<Float> result = new ArrayList<>();
+        List<Double> result = new ArrayList<>();
 
         for(WebElement goods: goodsCards){
             result.add(getPrice(goods));
@@ -102,11 +105,11 @@ public class GoodsCard extends BasePage{
         return result;
     }
 
-    public  List<Float> getRegPrices(){
+    @Step("Get list of regular prices the goods shown")
+    public  List<Double> getRegPrices(){
 
-        List<Float> result = new ArrayList<>();
+        List<Double> result = new ArrayList<>();
 
-        driver.manage().timeouts().implicitlyWait(0,TimeUnit.SECONDS);
 
         for(WebElement goods: goodsCards){
             try {
@@ -124,6 +127,7 @@ public class GoodsCard extends BasePage{
         return result;
     }
 
+    @Step("Get list of tittles the goods shown")
     public List<String> getTitles(){
 
         List<String> result = new ArrayList<>();
@@ -135,32 +139,34 @@ public class GoodsCard extends BasePage{
         return result;
     }
 
-
+    @Step("{attribute.value}")
     public Boolean checkAttributeExists(WebElement goods, PriceAttributes attribute){
-        driver.manage().timeouts().implicitlyWait(0,TimeUnit.SECONDS);
-        boolean res = !goods.findElements(attribute.value).isEmpty();
-        driver.manage().timeouts().implicitlyWait(10,TimeUnit.SECONDS);
-        return res;
+        return !goods.findElements(attribute.value).isEmpty();
     }
 
+    @Step("Checking existence of price")
     public Boolean checkPriceExists(WebElement goods){
         return checkAttributeExists(goods,PriceAttributes.Price);
 
     }
 
+    @Step("Checking existence of discount")
     public Boolean checkDiscountExists(WebElement goods){
         return checkAttributeExists(goods,PriceAttributes.Discount);
     }
 
+    @Step("Checking existence of regular price")
     public Boolean checkRegPriceExists(WebElement goods){
         return checkAttributeExists(goods,PriceAttributes.RegPrice);
     }
 
+    @Step("Checking existence of percent in discount")
     public Boolean checkPercentsAtDiscountExists(WebElement goods){
         String discStr = getAttribute(goods,StrAttributes.Discount);
         return discStr.endsWith("%");
     }
 
+    @Step("Calculate discount")
     public BigDecimal calculateDiscount(WebElement goods){
 
 
