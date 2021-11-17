@@ -61,9 +61,9 @@ public class ShopTest {
     @DataProvider
     public Object[][] currencies() {
         return new Object[][] {
-                {$},
-                {€},
-                {₴},
+                {USD},
+                {EUR},
+                {UAH},
         };
     }
 

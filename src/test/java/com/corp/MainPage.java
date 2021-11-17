@@ -47,9 +47,9 @@ public class MainPage extends BasePage {
 
     @SuppressWarnings("NonAsciiCharacters")
     public enum PageCurrency{
-        $,
-        €,
-        ₴
+        USD,
+        EUR,
+        UAH
     }
 
     public enum PageSortBy{
