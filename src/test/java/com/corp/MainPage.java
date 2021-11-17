@@ -1,11 +1,14 @@
 package com.corp;
 
 import com.google.common.collect.Ordering;
+import io.qameta.allure.Description;
+import io.qameta.allure.Step;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
 
@@ -75,42 +78,49 @@ public class MainPage extends BasePage {
         super(driver);
 
     }
-
+    @Step("Change page currency to: {currency}")
     public void changeCurrency(PageCurrency currency){
         changeDDValue(currencyDD,currencyDDValues, currency.toString());
     }
 
-    public void assertPageCurrency(){
-        char pageCurrency = currencyDD.getText().charAt(currencyDD.getText().length()-1);
-        char productCurrency = productCardCurrency.getText().charAt(productCardCurrency.getText().length()-1);
-        assert  pageCurrency == productCurrency;
+    public  String getPageCurrency(){
+        return String.valueOf(currencyDD.getText().charAt(currencyDD.getText().length()-1));
     }
 
+    @Step("Assert pag currency equals")
+    public void assertPageCurrency(){
+        Assert.assertEquals(getPageCurrency(),GC.getPriceCurrency(goodsCards.get(1)));
+    }
 
+    @Step("Search: \"{value}\"")
     public void search(String value){
         searchInput.sendKeys(value+Keys.ENTER);
-//        searchInput.sendKeys(Keys.ENTER);
     }
 
+    @Step("Get value from the goods shown counter")
     private int getValueTotalSearchProducts(){
         return Character.getNumericValue(totalSearchProducts.getText().charAt(totalSearchProducts.getText().length()-2));
     }
 
+    @Step("Assert that total number of the goods shown equals the goods shown counter")
     public void assertTotalResultSearch(){
         assert getTotalNumberOfGoodsAtPage() == getValueTotalSearchProducts();
     }
 
+    @Step("Counting the goods shown ")
     public int getTotalNumberOfGoodsAtPage(){
         return countElements(goodsCards);
     }
 
+    @Step("Assert that goods currencies equals page currency")
     public void assertGoodsCardsPriceMatchPageCurrency(){
         for (WebElement goods: goodsCards){
-            assert GC.getCurrency(goods) == '$';
+            Assert.assertEquals(GC.getPriceCurrency(goods), getPageCurrency());
         }
     }
 
-    public void sortBy(final PageSortBy sortByValue){
+    @Step("Sort products: \"{sortByValue.value}\"")
+    public void sortBy(PageSortBy sortByValue){
 
         changeDDValue(sortDD, sortDDValues, sortByValue.getValue());
 
@@ -118,6 +128,7 @@ public class MainPage extends BasePage {
 
     }
 
+    @Step("Assert sorting")
     public void assertSort(){
         if (sortDD.getText().startsWith(PageSortBy.PriceHtoL.getValue())){
             assert Ordering.natural().reverse().isOrdered(GC.getRegPrices());
@@ -136,8 +147,8 @@ public class MainPage extends BasePage {
         }
     }
 
+    @Step("Assert that goods with discount have values")
     public void assertDiscountedGoodsForContainsValues(){
-        driver.manage().timeouts().implicitlyWait(0,TimeUnit.SECONDS);
         for(WebElement goods:goodsCards){
             if(GC.checkDiscountExists(goods)){
                 Assert.assertTrue(GC.checkPercentsAtDiscountExists(goods),
@@ -150,8 +161,8 @@ public class MainPage extends BasePage {
         }
     }
 
+    @Step("Verification of Discount")
     public void assertGoodsDiscountMatches(){
-//        driver.manage().timeouts().implicitlyWait(0,TimeUnit.SECONDS);
         for (WebElement goods:goodsCards){
             if(GC.checkDiscountExists(goods)){
                 BigDecimal discount = BigDecimal.valueOf(GC.getDiscount(goods))
