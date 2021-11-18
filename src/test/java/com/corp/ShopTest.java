@@ -9,6 +9,7 @@ import org.testng.annotations.*;
 
 import java.net.MalformedURLException;
 import java.net.URI;
+import java.util.Map;
 
 import static com.corp.MainPage.PageCurrency;
 import static com.corp.MainPage.PageCurrency.*;
@@ -17,7 +18,7 @@ import static com.corp.MainPage.PageSortBy.*;
 
 public class ShopTest {
 
-    public  EventFiringWebDriver driver;
+    public  WebDriver driver;
     public  MainPage page;
 
 
@@ -32,16 +33,17 @@ public class ShopTest {
 
 
 
-        DesiredCapabilities capabilities = new DesiredCapabilities();
-        capabilities.setCapability("browserName", "chrome");
-        capabilities.setCapability("browserVersion", "95.0");
+//        DesiredCapabilities capabilities = new DesiredCapabilities();
+//        capabilities.setCapability("browserName", "chrome");
+//        capabilities.setCapability("browserVersion", "95.0");
+//
+//
+//        driver = new EventFiringWebDriver(
+//                new RemoteWebDriver(URI.create("http://10.8.0.46:4444/wd/hub")
+//                .toURL(), capabilities))
+//                .register(new Listener());
 
-
-        driver = new EventFiringWebDriver(
-                new RemoteWebDriver(URI.create("http://10.8.0.46:4444/wd/hub")
-                .toURL(), capabilities))
-                .register(new Listener());
-
+        driver = new ChromeDriver();
         driver.manage().window().maximize();
         page = new MainPage(driver);
         page.openPage(page.URL);
@@ -137,6 +139,14 @@ public class ShopTest {
 
         page.search("dress");
         page.assertGoodsDiscountMatches();
+
+    }
+
+    @Test void test_for_tests(){
+
+        System.getenv().forEach((k, v) -> {
+            System.out.println(k + ":" + v);
+        });
 
     }
 
