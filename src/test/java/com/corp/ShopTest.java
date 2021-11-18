@@ -33,17 +33,17 @@ public class ShopTest {
 
 
 
-//        DesiredCapabilities capabilities = new DesiredCapabilities();
-//        capabilities.setCapability("browserName", "chrome");
-//        capabilities.setCapability("browserVersion", "95.0");
-//
-//
-//        driver = new EventFiringWebDriver(
-//                new RemoteWebDriver(URI.create("http://10.8.0.46:4444/wd/hub")
-//                .toURL(), capabilities))
-//                .register(new Listener());
+        DesiredCapabilities capabilities = new DesiredCapabilities();
+        capabilities.setCapability("browserName", "chrome");
+        capabilities.setCapability("browserVersion", "95.0");
 
-        driver = new ChromeDriver();
+
+        driver = new EventFiringWebDriver(
+                new RemoteWebDriver(URI.create("http://10.8.0.46:4444/wd/hub")
+                .toURL(), capabilities))
+                .register(new Listener());
+
+//        driver = new ChromeDriver();
         driver.manage().window().maximize();
         page = new MainPage(driver);
         page.openPage(page.URL);
