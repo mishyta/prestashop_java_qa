@@ -11,6 +11,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.util.Map;
 
+import static com.corp.EnvironmentDetector.JNKENV;
 import static com.corp.MainPage.PageCurrency;
 import static com.corp.MainPage.PageCurrency.*;
 import static com.corp.MainPage.PageSortBy;
@@ -32,18 +33,21 @@ public class ShopTest {
     public  void setup() throws MalformedURLException {
 
 
+        if(JNKENV) {
+            DesiredCapabilities capabilities = new DesiredCapabilities();
+            capabilities.setCapability("browserName", "chrome");
+            capabilities.setCapability("browserVersion", "95.0");
 
-        DesiredCapabilities capabilities = new DesiredCapabilities();
-        capabilities.setCapability("browserName", "chrome");
-        capabilities.setCapability("browserVersion", "95.0");
 
+            driver = new EventFiringWebDriver(
+                    new RemoteWebDriver(URI.create("http://10.8.0.46:4444/wd/hub")
+                            .toURL(), capabilities))
+                    .register(new Listener());
+        }
+        else{
+            driver = new ChromeDriver();
+        }
 
-        driver = new EventFiringWebDriver(
-                new RemoteWebDriver(URI.create("http://10.8.0.46:4444/wd/hub")
-                .toURL(), capabilities))
-                .register(new Listener());
-
-//        driver = new ChromeDriver();
         driver.manage().window().maximize();
         page = new MainPage(driver);
         page.openPage(page.URL);
@@ -142,13 +146,7 @@ public class ShopTest {
 
     }
 
-    @Test void test_for_tests(){
 
-        System.getenv().forEach((k, v) -> {
-            System.out.println(k + ":" + v);
-        });
-
-    }
 
     @AfterMethod
     public void tearDown() {
