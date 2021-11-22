@@ -2,7 +2,6 @@ package com.corp;
 
 import io.qameta.allure.Step;
 import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -11,7 +10,6 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 public class GoodsCard extends BasePage{
 
@@ -22,30 +20,32 @@ public class GoodsCard extends BasePage{
 
     private enum PriceAttributes {
 
+        Discount(By.cssSelector("span.discount-percentage")),
         Price(By.cssSelector("span.price")),
-        RegPrice(By.cssSelector("span.regular-price")),
-        Discount(By.cssSelector("span.discount-percentage"));
+        RegPrice(By.cssSelector("span.regular-price"));
         private final By value;
 
-        PriceAttributes(By value){
+        PriceAttributes(By value) {
             this.value = value;
         }
-        public By getValue(){
+
+        public By getValue() {
             return value;
         }
     }
 
-    private enum StrAttributes{
+    private enum StrAttributes {
 
+        Discount(By.cssSelector("span.discount-percentage")),
         Price(By.cssSelector("span.price")),
-        Title(By.cssSelector("h1.product-title")),
-        Discount(By.cssSelector("span.discount-percentage"));
+        Title(By.cssSelector("h1.product-title"));
         private final By value;
 
-        StrAttributes(By value){
+        StrAttributes(By value) {
             this.value = value;
         }
-        public By getValue(){
+
+        public By getValue() {
             return value;
         }
     }
@@ -54,7 +54,13 @@ public class GoodsCard extends BasePage{
         super(driver);
     }
 
-    private double getAttribute(WebElement element, PriceAttributes attribute ){
+    /**
+     * method to work with PriceAttributes of goods
+     * @param element - an element from which to take an attribute
+     * @param attribute - which attribute to take
+     * @return double attribute
+     */
+    private static double getAttribute(WebElement element, PriceAttributes attribute ){
         String atr = element.findElement(attribute.getValue()).getText();
         StringBuilder stringBuffer = new StringBuilder(atr);
         stringBuffer.deleteCharAt(stringBuffer.length()-1);
@@ -62,23 +68,30 @@ public class GoodsCard extends BasePage{
 
     }
 
+    /**
+     * method to work with StrAttributes of goods
+     * @param element - an element from which to take an attribute
+     * @param attribute - which attribute to take
+     * @return String attribute
+     */
     @Step("{attributes.value}")
-    private String getAttribute(WebElement element, StrAttributes attributes){
-        return element.findElement(attributes.getValue()).getText();
+    private String getAttribute(WebElement element, StrAttributes attribute){
+        return element.findElement(attribute.getValue()).getText();
     }
 
     @Step("Get price of goods card")
-    public double getPrice(WebElement goodsCard) {
+    public static double getPrice(WebElement goodsCard) {
         return getAttribute(goodsCard,PriceAttributes.Price);
     }
 
     @Step("Get regular price of goods card")
-    public double getRegPrice(WebElement goodsCard) {
+    public static double getRegPrice(WebElement goodsCard) {
         return getAttribute(goodsCard,PriceAttributes.RegPrice);
     }
 
     @Step("Get discount of goods card")
     public double getDiscount(WebElement goodsCard) {
+
         return (getAttribute(goodsCard,PriceAttributes.Discount) * -0.01);
     }
 
@@ -95,73 +108,57 @@ public class GoodsCard extends BasePage{
 
     @Step("Get list of prices the goods shown")
     public  List<Double> getPrices(){
-
         List<Double> result = new ArrayList<>();
-
-        for(WebElement goods: goodsCards){
-            result.add(getPrice(goods));
-        }
-
+        goodsCards.forEach(goods -> result.add(getPrice(goods)));
         return result;
     }
 
+
+
     @Step("Get list of regular prices the goods shown")
     public  List<Double> getRegPrices(){
-
         List<Double> result = new ArrayList<>();
-
-
-        for(WebElement goods: goodsCards){
-            try {
-                goods.findElement(PriceAttributes.RegPrice.value);
+        goodsCards.forEach(goods -> {
+            if(checkRegPriceExists(goods)){
+                result.add(getRegPrice(goods));
             }
-            catch (NoSuchElementException e){
+            else{
                 result.add(getPrice(goods));
-                continue;
             }
-            result.add(getRegPrice(goods));
-
-        }
-
-
+        });
         return result;
     }
 
     @Step("Get list of tittles the goods shown")
     public List<String> getTitles(){
-
         List<String> result = new ArrayList<>();
-
-        for(WebElement goods: goodsCards){
-            result.add(getTitle(goods));
-        }
-
+        goodsCards.forEach(goods -> result.add(getTitle(goods)));
         return result;
     }
 
     @Step("{attribute.value}")
-    public Boolean checkAttributeExists(WebElement goods, PriceAttributes attribute){
+    public boolean checkAttributeExists(WebElement goods, PriceAttributes attribute){
         return !goods.findElements(attribute.value).isEmpty();
     }
 
     @Step("Checking existence of price")
-    public Boolean checkPriceExists(WebElement goods){
+    public boolean checkPriceExists(WebElement goods){
         return checkAttributeExists(goods,PriceAttributes.Price);
 
     }
 
     @Step("Checking existence of discount")
-    public Boolean checkDiscountExists(WebElement goods){
+    public boolean checkDiscountExists(WebElement goods){
         return checkAttributeExists(goods,PriceAttributes.Discount);
     }
 
     @Step("Checking existence of regular price")
-    public Boolean checkRegPriceExists(WebElement goods){
+    public boolean checkRegPriceExists(WebElement goods){
         return checkAttributeExists(goods,PriceAttributes.RegPrice);
     }
 
     @Step("Checking existence of percent in discount")
-    public Boolean checkPercentsAtDiscountExists(WebElement goods){
+    public boolean checkPercentsAtDiscountExists(WebElement goods){
         String discStr = getAttribute(goods,StrAttributes.Discount);
         return discStr.endsWith("%");
     }

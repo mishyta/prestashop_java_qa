@@ -12,7 +12,7 @@ import java.util.List;
 
 public class BasePage {
 
-    public WebDriver driver;
+    public final WebDriver driver;
 
     public BasePage(WebDriver driver) {
         PageFactory.initElements(driver, this);
@@ -22,11 +22,19 @@ public class BasePage {
     public void openPage(String url){
         driver.get(url);
     }
+
+    /**
+     * @param elements list of web elements
+     * @return size of this list
+     */
     public int countElements(List<WebElement> elements){
         return elements.size();
     }
 
     /**
+     *
+     * its example of dropdowns in that page.
+     *
      * ddvalues is list with dd options:
      *  <ul class="dropdown-menu hidden-sm-down" ...>
      *      <li>...</li>
